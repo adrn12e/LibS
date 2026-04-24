@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibS - Book Records</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+            <img src="images/Ellipse 3.png" alt="LibS">
+            <span>LibS</span>
+        </div>
+        <div class="sidebar-admin-info">
+            <div class="admin-name">Admin</div>
+            <div class="admin-role">System Administrator</div>
+        </div>
+        <nav class="admin-nav">
+            <a href="admin-dashboard.html"><span class="nav-icon">🏠</span> Dashboard Overview</a>
+            <a href="admin-users.html"><span class="nav-icon">👥</span> User Management</a>
+            <a href="admin-books.html" class="active"><span class="nav-icon">📚</span> Book Records</a>
+            <a href="admin-approvals.html"><span class="nav-icon">✅</span> Approvals / Requests</a>
+            <a href="admin-analytics.html"><span class="nav-icon">📊</span> Report & Analytics</a>
+            <a href="admin-settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+        </nav>
+        <a href="login.html" class="sidebar-logout">🚪 Log Out</a>
+    </aside>
+
+    <div class="admin-content">
+        <header class="admin-topbar">
+            <span class="topbar-title">Book Records</span>
+            <div class="topbar-right">
+                <div class="topbar-admin" id="adminDropdownBtn">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B3A2A&color=fff" alt="Admin">
+                    <div>
+                        <div class="topbar-admin-name">Admin ▾</div>
+                        <div class="topbar-admin-role">Administrator</div>
+                    </div>
+                    <div class="topbar-dropdown" id="adminDropdown">
+                        <a href="#">👤 Account Settings</a>
+                        <div class="dd-divider"></div>
+                        <a href="login.html" class="dd-logout">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-page">
+            <div class="page-header">
+                <div>
+                    <h1>Book Records</h1>
+                    <p>Manage the library's book inventory.</p>
+                </div>
+                <div style="display:flex;gap:0.6rem;">
+                    <button class="btn btn-ghost" onclick="sortBooks()">⇅ Sort</button>
+                    <button class="btn btn-brown" onclick="openAddBookModal()">+ Add Book</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>All Books</h2>
+                    <span style="font-size:0.8rem;color:rgba(255,255,255,0.6);">207 total books</span>
+                </div>
+                <div class="panel-body">
+                    <div class="toolbar">
+                        <input type="text" class="toolbar-search" id="bookSearch" placeholder="Search by title, author, ISBN...">
+                        <select id="genreFilter" onchange="filterBooks()">
+                            <option value="">All Genres</option>
+                            <option value="science">Science</option>
+                            <option value="mathematics">Mathematics</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="computer science">Computer Science</option>
+                            <option value="technology">Technology</option>
+                        </select>
+                        <select id="availFilter" onchange="filterBooks()">
+                            <option value="">All Availability</option>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table" id="booksTable">
+                            <thead>
+                                <tr>
+                                    <th>Book ID</th>
+                                    <th>Cover</th>
+                                    <th>Book Name</th>
+                                    <th>Author</th>
+                                    <th>Genre</th>
+                                    <th>Copies</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booksBody">
+                                <tr data-genre="science" data-avail="available">
+                                    <td>B001</td>
+                                    <td><img class="book-thumb" src="images/chemm.jpg" alt="Chemistry" style="width:42px;height:55px;object-fit:cover;border-radius:4px;"></td>
+                                    <td><strong>Chemistry for Engineering Students</strong></td>
+                                    <td>Lawrence S. Brown</td>
+                                    <td><span class="badge badge-blue">Science</span></td>
+                                    <td>5 / 8</td>
+                                    <td><span class="badge badge-green">Available</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewBook('Chemistry for Engineering Students')">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editBook('Chemistry for Engineering Students')">Edit details</button>
+                                        <button class="btn btn-orange btn-sm">Archive</button>
+                                        <button class="btn btn-red btn-sm" onclick="deleteBook(this)">Delete</button>
+                                    </div></td>
+                                </tr>
+                                <tr data-genre="mathematics" data-avail="available">
+                                    <td>B002</td>
+                                    <td><img class="book-thumb" src="images/diff eq.jpg" alt="Differential Equations" style="width:42px;height:55px;object-fit:cover;border-radius:4px;"></td>
+                                    <td><strong>Differential Equations</strong></td>
+                                    <td>Paul Blanchard</td>
+                                    <td><span class="badge badge-brown">Mathematics</span></td>
+                                    <td>3 / 5</td>
+                                    <td><span class="badge badge-green">Available</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewBook('Differential Equations')">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editBook('Differential Equations')">Edit details</button>
+                                        <button class="btn btn-orange btn-sm">Archive</button>
+                                        <button class="btn btn-red btn-sm" onclick="deleteBook(this)">Delete</button>
+                                    </div></td>
+                                </tr>
+                                <tr data-genre="mathematics" data-avail="available">
+                                    <td>B003</td>
+                                    <td><img class="book-thumb" src="https://imgs.search.brave.com/QSvhCCrcNkDgsOdbL1wWYWOCvLhrfNoGKBhRVqeqhmQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDEtcmMrSklrUUwu/anBn" alt="Engineering Mathematics" style="width:42px;height:55px;object-fit:cover;border-radius:4px;"></td>
+                                    <td><strong>Introduction to Math</strong></td>
+                                    <td>K.A. Stroud</td>
+                                    <td><span class="badge badge-brown">Mathematics</span></td>
+                                    <td>6 / 6</td>
+                                    <td><span class="badge badge-green">Available</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewBook('Introduction to Math')">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editBook('Introduction to Math')">Edit details</button>
+                                        <button class="btn btn-orange btn-sm">Archive</button>
+                                        <button class="btn btn-red btn-sm" onclick="deleteBook(this)">Delete</button>
+                                    </div></td>
+                                </tr>
+                                <tr data-genre="computer science" data-avail="available">
+                                    <td>B004</td>
+                                    <td><img class="book-thumb" src="images/java.webp" alt="Java" style="width:42px;height:55px;object-fit:cover;border-radius:4px;"></td>
+                                    <td><strong>Java Programming</strong></td>
+                                    <td>Y. Daniel Liang</td>
+                                    <td><span class="badge badge-blue">Computer Science</span></td>
+                                    <td>2 / 4</td>
+                                    <td><span class="badge badge-green">Available</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewBook('Java Programming')">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editBook('Java Programming')">Edit details</button>
+                                        <button class="btn btn-orange btn-sm">Archive</button>
+                                        <button class="btn btn-red btn-sm" onclick="deleteBook(this)">Delete</button>
+                                    </div></td>
+                                </tr>
+
+                                <!-- B005 — was placeholder, now uses local image -->
+                                <tr data-genre="technology" data-avail="unavailable">
+                                    <td>B005</td>
+                                    <td><img class="book-thumb" src="images/atomic habits.jpg" alt="Atomic Habits" style="width:42px;height:55px;object-fit:cover;border-radius:4px;"></td>
+                                    <td><strong>Atomic Habits</strong></td>
+                                    <td>James Clear</td>
+                                    <td><span class="badge badge-brown">Self-Help</span></td>
+                                    <td>0 / 3</td>
+                                    <td><span class="badge badge-red">Unavailable</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewBook('Atomic Habits')">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editBook('Atomic Habits')">Edit details</button>
+                                        <button class="btn btn-orange btn-sm">Archive</button>
+                                        <button class="btn btn-red btn-sm" onclick="deleteBook(this)">Delete</button>
+                                    </div></td>
+                                </tr>
+
+                                <!-- B006 — was placeholder, now uses local image -->
+                                <tr data-genre="mathematics" data-avail="available">
+                                    <td>B006</td>
+                                    <td><img class="book-thumb" src="images/num methods.jpg" alt="Numerical Methods" style="width:42px;height:55px;object-fit:cover;border-radius:4px;"></td>
+                                    <td><strong>Numerical Methods</strong></td>
+                                    <td>Steven Chapra</td>
+                                    <td><span class="badge badge-brown">Mathematics</span></td>
+                                    <td>4 / 5</td>
+                                    <td><span class="badge badge-green">Available</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewBook('Numerical Methods')">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editBook('Numerical Methods')">Edit details</button>
+                                        <button class="btn btn-orange btn-sm">Archive</button>
+                                        <button class="btn btn-red btn-sm" onclick="deleteBook(this)">Delete</button>
+                                    </div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- ADD BOOK MODAL -->
+<div class="modal-overlay" id="addBookModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('addBookModal')">✕</button>
+        <h2>➕ Add New Book</h2>
+        <div class="form-group"><label>Book Title</label><input type="text" placeholder="Enter book title"></div>
+        <div class="form-group"><label>Author</label><input type="text" placeholder="Enter author name"></div>
+        <div class="form-group"><label>ISBN</label><input type="text" placeholder="Enter ISBN"></div>
+        <div class="form-group"><label>Genre</label>
+            <select><option>Science</option><option>Mathematics</option><option>Engineering</option><option>Computer Science</option></select>
+        </div>
+        <div class="form-group"><label>Total Copies</label><input type="number" placeholder="e.g. 5" min="1"></div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('addBookModal')">Cancel</button>
+            <button class="btn btn-brown">Add Book</button>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW BOOK MODAL -->
+<div class="modal-overlay" id="viewBookModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('viewBookModal')">✕</button>
+        <h2>📖 Book Details</h2>
+        <div id="viewBookContent"></div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('viewBookModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('adminDropdownBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('adminDropdown').classList.toggle('show');
+    });
+    document.addEventListener('click', () => document.getElementById('adminDropdown').classList.remove('show'));
+
+    document.getElementById('bookSearch').addEventListener('input', filterBooks);
+
+    function filterBooks() {
+        const search = document.getElementById('bookSearch').value.toLowerCase();
+        const genre  = document.getElementById('genreFilter').value.toLowerCase();
+        const avail  = document.getElementById('availFilter').value.toLowerCase();
+        document.querySelectorAll('#booksBody tr').forEach(row => {
+            const text   = row.textContent.toLowerCase();
+            const rGenre = row.dataset.genre || '';
+            const rAvail = row.dataset.avail || '';
+            const ok = (!search || text.includes(search)) &&
+                       (!genre  || rGenre === genre) &&
+                       (!avail  || rAvail === avail);
+            row.style.display = ok ? '' : 'none';
+        });
+    }
+
+    let sortAsc = true;
+    function sortBooks() {
+        const tbody = document.getElementById('booksBody');
+        const rows  = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+            const ta = a.cells[2].textContent.trim();
+            const tb = b.cells[2].textContent.trim();
+            return sortAsc ? ta.localeCompare(tb) : tb.localeCompare(ta);
+        });
+        sortAsc = !sortAsc;
+        rows.forEach(r => tbody.appendChild(r));
+    }
+
+    function openAddBookModal() { document.getElementById('addBookModal').classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function viewBook(title) {
+        document.getElementById('viewBookContent').innerHTML =
+            `<p><strong>Title:</strong> ${title}</p>
+             <p><strong>Status:</strong> Available</p>
+             <p><strong>Currently Borrowed By:</strong> 2 users</p>`;
+        document.getElementById('viewBookModal').classList.add('show');
+    }
+
+    function editBook(title) { alert('Edit: ' + title); }
+
+    function deleteBook(btn) {
+        if (confirm('Are you sure you want to delete this book?')) {
+            btn.closest('tr').remove();
+        }
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); });
+    });
+</script>
+</body>
+</html>

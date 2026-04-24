@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibS - Settings</title>
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        /* Settings layout */
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 1.2rem;
+            align-items: start;
+        }
+        .settings-nav {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid rgba(139,69,19,0.12);
+            overflow: hidden;
+            position: sticky;
+            top: 1rem;
+        }
+        .settings-nav-header {
+            background: linear-gradient(135deg, #4A2210 0%, #6B3A2A 100%);
+            padding: 0.9rem 1.1rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+        }
+        .settings-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.1rem;
+            font-size: 0.85rem;
+            color: #5C3D2E;
+            font-weight: 600;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+        }
+        .settings-nav a:hover { background: rgba(200,168,130,0.15); color: #2E1A0E; }
+        .settings-nav a.active { background: rgba(200,168,130,0.2); border-left-color: #6B3A2A; color: #2E1A0E; }
+        .settings-nav a .nav-icon { font-size: 1rem; }
+
+        /* Settings panels */
+        .settings-section { display: none; }
+        .settings-section.active { display: block; }
+
+        .settings-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid rgba(139,69,19,0.12);
+            margin-bottom: 1.1rem;
+            overflow: hidden;
+        }
+        .settings-card-header {
+            background: linear-gradient(135deg, #4A2210 0%, #6B3A2A 100%);
+            padding: 0.85rem 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .settings-card-header h2 {
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .settings-card-header p {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.78rem;
+            margin: 0;
+        }
+        .settings-card-body {
+            padding: 1.4rem 1.5rem;
+        }
+
+        /* Form rows */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1.1rem;
+        }
+        .form-group:last-child { margin-bottom: 0; }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #5C3D2E;
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="number"],
+        .form-group input[type="password"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.55rem 0.8rem;
+            border: 1.5px solid rgba(139,69,19,0.2);
+            border-radius: 7px;
+            font-size: 0.88rem;
+            color: #2E1A0E;
+            background: #FDFAF7;
+            box-sizing: border-box;
+            transition: border-color 0.15s;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6B3A2A;
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group .helper { font-size: 0.75rem; color: #8B6347; margin-top: 0.3rem; }
+
+        /* Toggle switch */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(139,69,19,0.08);
+        }
+        .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .toggle-row:first-child { padding-top: 0; }
+        .toggle-label { font-size: 0.87rem; font-weight: 600; color: #2E1A0E; }
+        .toggle-sub   { font-size: 0.75rem; color: #8B6347; margin-top: 2px; }
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: #D3B99A;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .toggle-slider:before {
+            content: '';
+            position: absolute;
+            width: 18px; height: 18px;
+            left: 3px; top: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.25s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .toggle input:checked + .toggle-slider { background: #6B3A2A; }
+        .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+        /* Save bar */
+        .save-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.7rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(139,69,19,0.1);
+            margin-top: 1rem;
+        }
+
+        /* Admin profile avatar */
+        .avatar-row {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 1.4rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(139,69,19,0.1);
+        }
+        .avatar-circle {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6B3A2A, #C8A882);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 700; color: #fff;
+            flex-shrink: 0;
+        }
+        .avatar-info h3 { font-size: 1rem; font-weight: 700; color: #2E1A0E; margin: 0 0 2px; }
+        .avatar-info p  { font-size: 0.8rem; color: #8B6347; margin: 0; }
+
+        /* Danger zone */
+        .danger-zone {
+            background: rgba(183,28,28,0.04);
+            border: 1.5px solid rgba(183,28,28,0.2);
+            border-radius: 10px;
+            padding: 1.2rem 1.3rem;
+        }
+        .danger-zone h3 { font-size: 0.88rem; color: #B71C1C; font-weight: 700; margin: 0 0 0.5rem; }
+        .danger-zone p  { font-size: 0.8rem; color: #8B6347; margin: 0 0 0.9rem; }
+
+        /* Toast */
+        #settingsToast {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #2d7a4f; color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px; font-size: 0.88rem; font-weight: 500;
+            z-index: 9999; opacity: 0; transform: translateY(10px);
+            transition: opacity 0.25s, transform 0.25s; pointer-events: none;
+        }
+        #settingsToast.show { opacity: 1; transform: translateY(0); }
+
+        /* Role badge mini */
+        .role-badge {
+            display: inline-block;
+            padding: 0.18rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: rgba(107,58,42,0.12);
+            color: #6B3A2A;
+        }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+            <img src="images/Ellipse 3.png" alt="LibS">
+            <span>LibS</span>
+        </div>
+        <div class="sidebar-admin-info">
+            <div class="admin-name">Admin</div>
+            <div class="admin-role">System Administrator</div>
+        </div>
+        <nav class="admin-nav">
+            <a href="admin-dashboard.html"><span class="nav-icon">🏠</span> Dashboard Overview</a>
+            <a href="admin-users.html"><span class="nav-icon">👥</span> User Management</a>
+            <a href="admin-books.html"><span class="nav-icon">📚</span> Book Records</a>
+            <a href="admin-approvals.html"><span class="nav-icon">✅</span> Approvals / Requests</a>
+            <a href="admin-analytics.html"><span class="nav-icon">📊</span> Report & Analytics</a>
+            <a href="admin-settings.html" class="active"><span class="nav-icon">⚙️</span> Settings</a>
+        </nav>
+        <a href="login.html" class="sidebar-logout">🚪 Log Out</a>
+    </aside>
+
+    <div class="admin-content">
+        <header class="admin-topbar">
+            <span class="topbar-title">Settings</span>
+            <div class="topbar-right">
+                <div class="topbar-admin" id="adminDropdownBtn">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B3A2A&color=fff" alt="Admin">
+                    <div>
+                        <div class="topbar-admin-name">Admin ▾</div>
+                        <div class="topbar-admin-role">Administrator</div>
+                    </div>
+                    <div class="topbar-dropdown" id="adminDropdown">
+                        <a href="#">👤 Account Settings</a>
+                        <div class="dd-divider"></div>
+                        <a href="login.html" class="dd-logout">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-page">
+            <div class="page-header">
+                <div>
+                    <h1>Settings</h1>
+                    <p>Configure your library system preferences.</p>
+                </div>
+            </div>
+
+            <div class="settings-layout">
+
+                <!-- LEFT NAV -->
+                <div class="settings-nav">
+                    <div class="settings-nav-header">Configuration</div>
+                    <a href="#" class="active" onclick="showSection('profile', this)"><span class="nav-icon">👤</span> My Profile</a>
+                    <a href="#" onclick="showSection('library', this)"><span class="nav-icon">🏛️</span> Library Info</a>
+                    <a href="#" onclick="showSection('borrow', this)"><span class="nav-icon">📋</span> Borrow Rules</a>
+                    <a href="#" onclick="showSection('notifications', this)"><span class="nav-icon">🔔</span> Notifications</a>
+                    <a href="#" onclick="showSection('security', this)"><span class="nav-icon">🔒</span> Security</a>
+                    <a href="#" onclick="showSection('system', this)"><span class="nav-icon">🖥️</span> System</a>
+                </div>
+
+                <!-- RIGHT CONTENT -->
+                <div>
+
+                    <!-- PROFILE -->
+                    <div class="settings-section active" id="section-profile">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div>
+                                    <h2>👤 My Profile</h2>
+                                    <p>Update your admin account information</p>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="avatar-row">
+                                    <div class="avatar-circle">A</div>
+                                    <div class="avatar-info">
+                                        <h3>Admin <span class="role-badge">System Administrator</span></h3>
+                                        <p>admin@libs.pu.edu.ph</p>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>First Name</label>
+                                        <input type="text" value="System">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" value="Admin">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" value="admin@libs.pu.edu.ph">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    <input type="text" placeholder="e.g. +63 912 345 6789">
+                                </div>
+                                <div class="save-bar">
+                                    <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
+                                    <button class="btn btn-brown" onclick="saveSettings('Profile updated successfully.')">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LIBRARY INFO -->
+                    <div class="settings-section" id="section-library">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div>
+                                    <h2>🏛️ Library Information</h2>
+                                    <p>Basic details about your library</p>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="form-group">
+                                    <label>Library Name</label>
+                                    <input type="text" value="LibS — Polytechnic University Library">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Contact Email</label>
+                                        <input type="email" value="library@pu.edu.ph">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Contact Phone</label>
+                                        <input type="text" value="+63 2 8888 0000">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea>Polytechnic University, Anonas St., Santa Mesa, Manila</textarea>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Opening Time</label>
+                                        <input type="text" value="07:30 AM">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Closing Time</label>
+                                        <input type="text" value="05:00 PM">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Operating Days</label>
+                                    <select>
+                                        <option selected>Monday – Friday</option>
+                                        <option>Monday – Saturday</option>
+                                        <option>Monday – Sunday</option>
+                                    </select>
+                                </div>
+                                <div class="save-bar">
+                                    <button class="btn btn-ghost">Reset</button>
+                                    <button class="btn btn-brown" onclick="saveSettings('Library info saved.')">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BORROW RULES -->
+                    <div class="settings-section" id="section-borrow">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div>
+                                    <h2>📋 Borrow Rules</h2>
+                                    <p>Configure borrowing limits and due date policies</p>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Borrow Limit — Student</label>
+                                        <input type="number" value="3" min="1" max="20">
+                                        <div class="helper">Maximum books a student can borrow at once</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Borrow Limit — Faculty</label>
+                                        <input type="number" value="10" min="1" max="50">
+                                        <div class="helper">Maximum books faculty can borrow at once</div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Loan Period — Student (days)</label>
+                                        <input type="number" value="7" min="1" max="90">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Loan Period — Faculty (days)</label>
+                                        <input type="number" value="14" min="1" max="90">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Overdue Fine (per day, ₱)</label>
+                                        <input type="number" value="5" min="0">
+                                        <div class="helper">Set to 0 to disable fines</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Max Renewals Allowed</label>
+                                        <input type="number" value="2" min="0" max="10">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Reservation Hold Period (days)</label>
+                                    <input type="number" value="2" min="1">
+                                    <div class="helper">How long a reserved book is held before cancellation</div>
+                                </div>
+                                <div class="save-bar">
+                                    <button class="btn btn-ghost">Reset to Defaults</button>
+                                    <button class="btn btn-brown" onclick="saveSettings('Borrow rules updated.')">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NOTIFICATIONS -->
+                    <div class="settings-section" id="section-notifications">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div>
+                                    <h2>🔔 Notification Settings</h2>
+                                    <p>Control when and how users receive alerts</p>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="toggle-row">
+                                    <div>
+                                        <div class="toggle-label">Due Date Reminder</div>
+                                        <div class="toggle-sub">Notify users 2 days before their book is due</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div>
+                                        <div class="toggle-label">Overdue Alerts</div>
+                                        <div class="toggle-sub">Send daily alerts for books past their due date</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div>
+                                        <div class="toggle-label">Request Approved Notification</div>
+                                        <div class="toggle-sub">Notify users when their borrow request is approved</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div>
+                                        <div class="toggle-label">Request Declined Notification</div>
+                                        <div class="toggle-sub">Notify users when their request is declined</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div>
+                                        <div class="toggle-label">New User Registration Alert</div>
+                                        <div class="toggle-sub">Alert admin when a new user registers</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div>
+                                        <div class="toggle-label">Low Book Stock Alert</div>
+                                        <div class="toggle-sub">Alert admin when available copies drop to 1</div>
+                                    </div>
+                                    <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="save-bar">
+                                    <button class="btn btn-brown" onclick="saveSettings('Notification preferences saved.')">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECURITY -->
+                    <div class="settings-section" id="section-security">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div>
+                                    <h2>🔒 Security</h2>
+                                    <p>Password and access control settings</p>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" placeholder="Enter current password">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>New Password</label>
+                                        <input type="password" placeholder="Enter new password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirm New Password</label>
+                                        <input type="password" placeholder="Re-enter new password">
+                                    </div>
+                                </div>
+                                <div class="save-bar" style="margin-bottom:1.5rem;">
+                                    <button class="btn btn-brown" onclick="saveSettings('Password changed successfully.')">Change Password</button>
+                                </div>
+
+                                <div style="border-top:1px solid rgba(139,69,19,0.1);padding-top:1.3rem;">
+                                    <div class="toggle-row">
+                                        <div>
+                                            <div class="toggle-label">Session Timeout</div>
+                                            <div class="toggle-sub">Automatically log out after 30 minutes of inactivity</div>
+                                        </div>
+                                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </div>
+                                    <div class="toggle-row">
+                                        <div>
+                                            <div class="toggle-label">Login Activity Log</div>
+                                            <div class="toggle-sub">Keep a record of all admin login attempts</div>
+                                        </div>
+                                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div><h2>⛔ Danger Zone</h2></div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="danger-zone">
+                                    <h3>Reset All Library Data</h3>
+                                    <p>This will permanently delete all borrow records, user data, and book records. This action cannot be undone.</p>
+                                    <button class="btn btn-red" onclick="confirmDanger()">Reset System Data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SYSTEM -->
+                    <div class="settings-section" id="section-system">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div>
+                                    <h2>🖥️ System Preferences</h2>
+                                    <p>General system configuration</p>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="form-group">
+                                    <label>System Name</label>
+                                    <input type="text" value="LibS">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Date Format</label>
+                                        <select>
+                                            <option selected>MM-DD-YYYY</option>
+                                            <option>DD-MM-YYYY</option>
+                                            <option>YYYY-MM-DD</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Time Zone</label>
+                                        <select>
+                                            <option selected>Asia/Manila (UTC+8)</option>
+                                            <option>UTC</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Default Language</label>
+                                    <select>
+                                        <option selected>English</option>
+                                        <option>Filipino</option>
+                                    </select>
+                                </div>
+                                <div style="border-top:1px solid rgba(139,69,19,0.1);padding-top:1.2rem;margin-top:0.5rem;">
+                                    <div class="toggle-row">
+                                        <div>
+                                            <div class="toggle-label">Maintenance Mode</div>
+                                            <div class="toggle-sub">Temporarily disable user access to the system</div>
+                                        </div>
+                                        <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                                    </div>
+                                    <div class="toggle-row">
+                                        <div>
+                                            <div class="toggle-label">Allow New Registrations</div>
+                                            <div class="toggle-sub">Let new users register on the platform</div>
+                                        </div>
+                                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </div>
+                                    <div class="toggle-row">
+                                        <div>
+                                            <div class="toggle-label">Require Admin Approval for Registration</div>
+                                            <div class="toggle-sub">New accounts need admin approval before activation</div>
+                                        </div>
+                                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </div>
+                                </div>
+                                <div class="save-bar">
+                                    <button class="btn btn-ghost">Reset</button>
+                                    <button class="btn btn-brown" onclick="saveSettings('System preferences saved.')">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Info Card -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div><h2>ℹ️ System Info</h2></div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;">
+                                    <div style="background:rgba(200,168,130,0.1);border-radius:8px;padding:0.8rem 1rem;">
+                                        <div style="font-size:0.72rem;color:#8B6347;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Version</div>
+                                        <div style="font-size:0.9rem;font-weight:700;color:#2E1A0E;">LibS v1.0.0</div>
+                                    </div>
+                                    <div style="background:rgba(200,168,130,0.1);border-radius:8px;padding:0.8rem 1rem;">
+                                        <div style="font-size:0.72rem;color:#8B6347;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Last Updated</div>
+                                        <div style="font-size:0.9rem;font-weight:700;color:#2E1A0E;">January 2026</div>
+                                    </div>
+                                    <div style="background:rgba(200,168,130,0.1);border-radius:8px;padding:0.8rem 1rem;">
+                                        <div style="font-size:0.72rem;color:#8B6347;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Total Records</div>
+                                        <div style="font-size:0.9rem;font-weight:700;color:#2E1A0E;">145 Users · 207 Books</div>
+                                    </div>
+                                    <div style="background:rgba(200,168,130,0.1);border-radius:8px;padding:0.8rem 1rem;">
+                                        <div style="font-size:0.72rem;color:#8B6347;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Status</div>
+                                        <div style="font-size:0.9rem;font-weight:700;color:#2E7D32;">● System Online</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="settingsToast">Saved successfully.</div>
+
+<script>
+    /* Dropdown */
+    document.getElementById('adminDropdownBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('adminDropdown').classList.toggle('show');
+    });
+    document.addEventListener('click', () => document.getElementById('adminDropdown').classList.remove('show'));
+
+    /* Section switching */
+    function showSection(name, link) {
+        document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.settings-nav a').forEach(a => a.classList.remove('active'));
+        document.getElementById('section-' + name).classList.add('active');
+        link.classList.add('active');
+        return false;
+    }
+
+    /* Toast */
+    function saveSettings(msg) {
+        const toast = document.getElementById('settingsToast');
+        toast.textContent = msg || 'Settings saved.';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    function resetForm() {}
+
+    function confirmDanger() {
+        if (confirm('⚠️ WARNING: This will permanently delete all system data. Are you absolutely sure?')) {
+            alert('System reset initiated. (Demo — no data was deleted.)');
+        }
+    }
+</script>
+</body>
+</html>

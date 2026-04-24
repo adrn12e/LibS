@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibS - Report & Analytics</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+        .analytics-grid.three-col {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        .chart-panel {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid rgba(139,69,19,0.12);
+            overflow: hidden;
+        }
+        .chart-panel.full-width {
+            grid-column: 1 / -1;
+        }
+        .chart-panel-header {
+            background: linear-gradient(135deg, #4A2210 0%, #6B3A2A 100%);
+            padding: 0.85rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chart-panel-header h2 {
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .chart-panel-header span {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+        }
+        .chart-panel-body {
+            padding: 1.2rem;
+        }
+        .chart-wrap {
+            position: relative;
+            height: 220px;
+        }
+        .chart-wrap.tall {
+            height: 280px;
+        }
+
+        /* Top stat summary cards */
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .summary-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid rgba(139,69,19,0.12);
+            padding: 1.1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .summary-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .summary-icon.blue   { background: rgba(33,150,243,0.12); }
+        .summary-icon.green  { background: rgba(46,125,50,0.12); }
+        .summary-icon.orange { background: rgba(230,81,0,0.12); }
+        .summary-icon.red    { background: rgba(183,28,28,0.12); }
+        .summary-label { font-size: 0.75rem; color: #8B6347; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+        .summary-value { font-size: 1.6rem; font-weight: 700; color: #2E1A0E; line-height: 1.1; }
+        .summary-sub   { font-size: 0.72rem; color: #8B6347; margin-top: 2px; }
+
+        /* Top books table */
+        .top-books-list { display: flex; flex-direction: column; gap: 0.6rem; }
+        .top-book-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.55rem 0.7rem;
+            border-radius: 8px;
+            background: rgba(200,168,130,0.08);
+        }
+        .top-book-rank {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #6B3A2A;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .top-book-title { flex: 1; font-size: 0.83rem; font-weight: 600; color: #2E1A0E; }
+        .top-book-count { font-size: 0.8rem; color: #6B3A2A; font-weight: 700; }
+
+        /* Export bar */
+        .export-bar {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .export-bar label { font-size: 0.82rem; color: #8B6347; font-weight: 600; }
+        .export-bar select, .export-bar input[type="month"] {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid rgba(139,69,19,0.2);
+            border-radius: 6px;
+            font-size: 0.83rem;
+            color: #2E1A0E;
+            background: #fff;
+        }
+
+        /* Legend pill */
+        .legend-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.7rem; }
+        .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
+        .legend-item { font-size: 0.75rem; color: #8B6347; display: flex; align-items: center; }
+
+        .section-divider {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #8B6347;
+            margin: 0.3rem 0 0.8rem;
+        }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+            <img src="images/Ellipse 3.png" alt="LibS">
+            <span>LibS</span>
+        </div>
+        <div class="sidebar-admin-info">
+            <div class="admin-name">Admin</div>
+            <div class="admin-role">System Administrator</div>
+        </div>
+        <nav class="admin-nav">
+            <a href="admin-dashboard.html"><span class="nav-icon">🏠</span> Dashboard Overview</a>
+            <a href="admin-users.html"><span class="nav-icon">👥</span> User Management</a>
+            <a href="admin-books.html"><span class="nav-icon">📚</span> Book Records</a>
+            <a href="admin-approvals.html"><span class="nav-icon">✅</span> Approvals / Requests</a>
+            <a href="admin-analytics.html" class="active"><span class="nav-icon">📊</span> Report & Analytics</a>
+            <a href="admin-settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+        </nav>
+        <a href="login.html" class="sidebar-logout">🚪 Log Out</a>
+    </aside>
+
+    <div class="admin-content">
+        <header class="admin-topbar">
+            <span class="topbar-title">Report & Analytics</span>
+            <div class="topbar-right">
+                <div class="topbar-admin" id="adminDropdownBtn">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B3A2A&color=fff" alt="Admin">
+                    <div>
+                        <div class="topbar-admin-name">Admin ▾</div>
+                        <div class="topbar-admin-role">Administrator</div>
+                    </div>
+                    <div class="topbar-dropdown" id="adminDropdown">
+                        <a href="#">👤 Account Settings</a>
+                        <div class="dd-divider"></div>
+                        <a href="login.html" class="dd-logout">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-page">
+            <div class="page-header">
+                <div>
+                    <h1>Report & Analytics</h1>
+                    <p>Library usage statistics and borrowing trends.</p>
+                </div>
+                <button class="btn btn-brown" onclick="window.print()">⬇ Export Report</button>
+            </div>
+
+            <!-- FILTER BAR -->
+            <div class="export-bar">
+                <label>Period:</label>
+                <select id="periodFilter" onchange="updateCharts()">
+                    <option value="monthly">Monthly (2026)</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+                <label style="margin-left:0.5rem;">Genre:</label>
+                <select id="genreFilterA">
+                    <option value="all">All Genres</option>
+                    <option>Science</option>
+                    <option>Mathematics</option>
+                    <option>Computer Science</option>
+                    <option>Engineering</option>
+                </select>
+            </div>
+
+            <!-- SUMMARY CARDS -->
+            <div class="summary-stats">
+                <div class="summary-card">
+                    <div class="summary-icon blue">📚</div>
+                    <div>
+                        <div class="summary-label">Total Borrowed</div>
+                        <div class="summary-value">215</div>
+                        <div class="summary-sub">+12 this month</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon green">✅</div>
+                    <div>
+                        <div class="summary-label">Total Returned</div>
+                        <div class="summary-value">198</div>
+                        <div class="summary-sub">92% return rate</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon orange">⏳</div>
+                    <div>
+                        <div class="summary-label">Active Loans</div>
+                        <div class="summary-value">17</div>
+                        <div class="summary-sub">3 due this week</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon red">⚠️</div>
+                    <div>
+                        <div class="summary-label">Overdue</div>
+                        <div class="summary-value">10</div>
+                        <div class="summary-sub">Avg 4.2 days late</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 1: Line Chart + Doughnut -->
+            <div class="analytics-grid">
+                <div class="chart-panel">
+                    <div class="chart-panel-header">
+                        <h2>📈 Borrowing Trend</h2>
+                        <span>Jan – Jun 2026</span>
+                    </div>
+                    <div class="chart-panel-body">
+                        <div class="chart-wrap">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-item"><span class="legend-dot" style="background:#6B3A2A;"></span> Borrowed</div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#2E7D32;"></span> Returned</div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#B71C1C;"></span> Overdue</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-panel">
+                    <div class="chart-panel-header">
+                        <h2>📂 Books by Genre</h2>
+                        <span>Current inventory</span>
+                    </div>
+                    <div class="chart-panel-body">
+                        <div class="chart-wrap">
+                            <canvas id="genreChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 2: Bar Chart + Top Books -->
+            <div class="analytics-grid">
+                <div class="chart-panel">
+                    <div class="chart-panel-header">
+                        <h2>📊 Monthly Requests</h2>
+                        <span>Approved vs Declined</span>
+                    </div>
+                    <div class="chart-panel-body">
+                        <div class="chart-wrap">
+                            <canvas id="requestChart"></canvas>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-item"><span class="legend-dot" style="background:#2E7D32;"></span> Approved</div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#B71C1C;"></span> Declined</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-panel">
+                    <div class="chart-panel-header">
+                        <h2>🏆 Most Borrowed Books</h2>
+                        <span>All time</span>
+                    </div>
+                    <div class="chart-panel-body">
+                        <div class="top-books-list">
+                            <div class="top-book-row">
+                                <div class="top-book-rank">1</div>
+                                <div class="top-book-title">Chemistry for Engineering Students</div>
+                                <div class="top-book-count">42x</div>
+                            </div>
+                            <div class="top-book-row">
+                                <div class="top-book-rank">2</div>
+                                <div class="top-book-title">Java Programming</div>
+                                <div class="top-book-count">38x</div>
+                            </div>
+                            <div class="top-book-row">
+                                <div class="top-book-rank">3</div>
+                                <div class="top-book-title">Differential Equations</div>
+                                <div class="top-book-count">31x</div>
+                            </div>
+                            <div class="top-book-row">
+                                <div class="top-book-rank">4</div>
+                                <div class="top-book-title">Numerical Methods</div>
+                                <div class="top-book-count">28x</div>
+                            </div>
+                            <div class="top-book-row">
+                                <div class="top-book-rank">5</div>
+                                <div class="top-book-title">Atomic Habits</div>
+                                <div class="top-book-count">24x</div>
+                            </div>
+                            <div class="top-book-row">
+                                <div class="top-book-rank">6</div>
+                                <div class="top-book-title">Introduction to Math</div>
+                                <div class="top-book-count">19x</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 3: User activity bar -->
+            <div class="analytics-grid" style="grid-template-columns:1fr;">
+                <div class="chart-panel full-width">
+                    <div class="chart-panel-header">
+                        <h2>👥 User Activity — Borrows per Role</h2>
+                        <span>Jan – Jun 2026</span>
+                    </div>
+                    <div class="chart-panel-body">
+                        <div class="chart-wrap tall">
+                            <canvas id="userRoleChart"></canvas>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-item"><span class="legend-dot" style="background:#1565C0;"></span> Students</div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#E65100;"></span> Faculty</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script>
+    /* Dropdown */
+    document.getElementById('adminDropdownBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('adminDropdown').classList.toggle('show');
+    });
+    document.addEventListener('click', () => document.getElementById('adminDropdown').classList.remove('show'));
+
+    const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+
+    /* ── Trend Line Chart ── */
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    const trendChart = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Borrowed',
+                    data: [28, 35, 40, 32, 45, 35],
+                    borderColor: '#6B3A2A',
+                    backgroundColor: 'rgba(107,58,42,0.08)',
+                    tension: 0.4, fill: true, pointRadius: 4,
+                    pointBackgroundColor: '#6B3A2A'
+                },
+                {
+                    label: 'Returned',
+                    data: [22, 30, 37, 29, 40, 30],
+                    borderColor: '#2E7D32',
+                    backgroundColor: 'rgba(46,125,50,0.05)',
+                    tension: 0.4, fill: true, pointRadius: 4,
+                    pointBackgroundColor: '#2E7D32'
+                },
+                {
+                    label: 'Overdue',
+                    data: [3, 4, 2, 5, 3, 4],
+                    borderColor: '#B71C1C',
+                    backgroundColor: 'rgba(183,28,28,0.05)',
+                    tension: 0.4, fill: true, pointRadius: 4,
+                    pointBackgroundColor: '#B71C1C'
+                }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11 }, color: '#8B6347' } },
+                y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11 }, color: '#8B6347' }, beginAtZero: true }
+            }
+        }
+    });
+
+    /* ── Genre Doughnut ── */
+    const genreCtx = document.getElementById('genreChart').getContext('2d');
+    new Chart(genreCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Science','Mathematics','Computer Sci.','Engineering','Self-Help','Other'],
+            datasets: [{
+                data: [45, 62, 38, 30, 18, 14],
+                backgroundColor: ['#6B3A2A','#C8A882','#2E7D32','#1565C0','#E65100','#8B6347'],
+                borderWidth: 2, borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right', labels: { font: { size: 11 }, color: '#2E1A0E', padding: 10, boxWidth: 12 } }
+            },
+            cutout: '62%'
+        }
+    });
+
+    /* ── Request Bar Chart ── */
+    const reqCtx = document.getElementById('requestChart').getContext('2d');
+    new Chart(reqCtx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Approved',
+                    data: [24, 31, 36, 28, 41, 30],
+                    backgroundColor: 'rgba(46,125,50,0.75)',
+                    borderRadius: 5
+                },
+                {
+                    label: 'Declined',
+                    data: [4, 4, 4, 4, 4, 5],
+                    backgroundColor: 'rgba(183,28,28,0.7)',
+                    borderRadius: 5
+                }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#8B6347' } },
+                y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11 }, color: '#8B6347' }, beginAtZero: true }
+            }
+        }
+    });
+
+    /* ── User Role Bar Chart ── */
+    const roleCtx = document.getElementById('userRoleChart').getContext('2d');
+    new Chart(roleCtx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Students',
+                    data: [22, 28, 33, 25, 38, 27],
+                    backgroundColor: 'rgba(21,101,192,0.75)',
+                    borderRadius: 5
+                },
+                {
+                    label: 'Faculty',
+                    data: [6, 7, 7, 7, 7, 8],
+                    backgroundColor: 'rgba(230,81,0,0.75)',
+                    borderRadius: 5
+                }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { size: 12 }, color: '#8B6347' } },
+                y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 12 }, color: '#8B6347' }, beginAtZero: true }
+            }
+        }
+    });
+
+    function updateCharts() { /* could swap datasets based on filter */ }
+</script>
+</body>
+</html>

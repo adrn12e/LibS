@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibS - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+            <img src="images/Ellipse 3.png" alt="LibS">
+            <span>LibS</span>
+        </div>
+        <div class="sidebar-admin-info">
+            <div class="admin-name">Admin</div>
+            <div class="admin-role">System Administrator</div>
+        </div>
+        <nav class="admin-nav">
+            <a href="admin-dashboard.html" class="active"><span class="nav-icon">🏠</span> Dashboard Overview</a>
+            <a href="admin-users.html"><span class="nav-icon">👥</span> User Management</a>
+            <a href="admin-books.html"><span class="nav-icon">📚</span> Book Records</a>
+            <a href="admin-approvals.html"><span class="nav-icon">✅</span> Approvals / Requests</a>
+            <a href="admin-analytics.html"><span class="nav-icon">📊</span> Report & Analytics</a>
+            <a href="admin-settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+        </nav>
+        <a href="login.html" class="sidebar-logout">🚪 Log Out</a>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="admin-content">
+
+        <!-- TOP BAR -->
+        <header class="admin-topbar">
+            <span class="topbar-title">Dashboard Overview</span>
+            <div class="topbar-right">
+                <div class="topbar-admin" id="adminDropdownBtn">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B3A2A&color=fff" alt="Admin">
+                    <div>
+                        <div class="topbar-admin-name">Admin ▾</div>
+                        <div class="topbar-admin-role">Administrator</div>
+                    </div>
+                    <div class="topbar-dropdown" id="adminDropdown">
+                        <a href="#">👤 Account Settings</a>
+                        <div class="dd-divider"></div>
+                        <a href="login.html" class="dd-logout">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- PAGE BODY -->
+        <main class="admin-page">
+
+            <div class="page-header">
+                <div>
+                    <h1>Dashboard Overview</h1>
+                    <p>Welcome back, Admin. Here's what's happening today.</p>
+                </div>
+                <div id="live-time" style="font-size:0.85rem;color:#8B6347;"></div>
+            </div>
+
+            <!-- STATS -->
+            <div class="stat-grid">
+                <div class="stat-card s-blue">
+                    <div class="stat-num">145</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card s-green">
+                    <div class="stat-num">110</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-card s-orange">
+                    <div class="stat-num">20</div>
+                    <div class="stat-label">Admin Users</div>
+                </div>
+                <div class="stat-card s-red">
+                    <div class="stat-num">5</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+                <div class="stat-card s-brown">
+                    <div class="stat-num">207</div>
+                    <div class="stat-label">Total Books</div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+
+                <!-- SYSTEM ACTIVITY -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>System Activity</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;margin-bottom:1rem;">
+                            <div style="background:rgba(200,168,130,0.2);border-radius:10px;padding:1rem;text-align:center;">
+                                <div style="font-size:1.6rem;font-weight:700;color:#6B3A2A;">215</div>
+                                <div style="font-size:0.75rem;font-weight:700;color:#8B6347;text-transform:uppercase;letter-spacing:0.5px;">Total Books Borrowed</div>
+                            </div>
+                            <div style="background:rgba(200,168,130,0.2);border-radius:10px;padding:1rem;text-align:center;">
+                                <div style="font-size:1.6rem;font-weight:700;color:#2E7D32;">5</div>
+                                <div style="font-size:0.75rem;font-weight:700;color:#8B6347;text-transform:uppercase;letter-spacing:0.5px;">Total Books Returned</div>
+                            </div>
+                        </div>
+                        <div style="background:rgba(183,28,28,0.07);border-radius:10px;padding:1rem;text-align:center;border:1px solid rgba(183,28,28,0.15);">
+                            <div style="font-size:1.6rem;font-weight:700;color:#B71C1C;">10</div>
+                            <div style="font-size:0.75rem;font-weight:700;color:#8B6347;text-transform:uppercase;letter-spacing:0.5px;">Books Overdue</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUICK ACTIONS -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div class="panel-body" style="display:flex;flex-direction:column;gap:0.7rem;">
+                        <a href="admin-users.html" class="btn btn-brown" style="justify-content:center;"> Manage Users</a>
+                        <a href="admin-books.html" class="btn btn-blue" style="justify-content:center;"> Manage Books</a>
+                        <a href="admin-approvals.html" class="btn btn-orange" style="justify-content:center;"> Review Requests               
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITY TABLE -->
+            <div class="panel" style="margin-top:1.2rem;">
+                <div class="panel-header">
+                    <h2>Recent Borrow Activity</h2>
+                    <a href="admin-approvals.html" class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,0.3);">View All</a>
+                </div>
+                <div class="panel-body" style="padding:0;">
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Book</th>
+                                    <th>Date Borrowed</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Adrian S. Bellen</td>
+                                    <td>Chemistry for Engineering Students</td>
+                                    <td>01-03-2026</td>
+                                    <td>01-10-2026</td>
+                                    <td><span class="badge badge-orange">Borrowed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Maria Santos</td>
+                                    <td>Differential Equations</td>
+                                    <td>01-03-2026</td>
+                                    <td>01-10-2026</td>
+                                    <td><span class="badge badge-orange">Borrowed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Juan dela Cruz</td>
+                                    <td>Engineering Mathematics</td>
+                                    <td>12-01-2025</td>
+                                    <td>12-08-2025</td>
+                                    <td><span class="badge badge-green">Returned</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Ana Reyes</td>
+                                    <td>Physics for Engineers</td>
+                                    <td>10-10-2025</td>
+                                    <td>10-17-2025</td>
+                                    <td><span class="badge badge-red">Overdue</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Carlo Mendoza</td>
+                                    <td>Open Circuits</td>
+                                    <td>01-06-2026</td>
+                                    <td>01-13-2026</td>
+                                    <td><span class="badge badge-orange">Borrowed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script>
+    // Dropdown toggle
+    document.getElementById('adminDropdownBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('adminDropdown').classList.toggle('show');
+    });
+    document.addEventListener('click', () => document.getElementById('adminDropdown').classList.remove('show'));
+
+    // Live clock
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('live-time').textContent =
+            now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) +
+            '  ' + now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    }
+    updateTime(); setInterval(updateTime, 1000);
+</script>
+</body>
+</html>

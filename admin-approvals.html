@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibS - Approvals & Requests</title>
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid rgba(139,69,19,0.15);
+            margin-bottom: 1.4rem;
+        }
+        .tab-btn {
+            padding: 0.7rem 1.4rem;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #8B6347;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .tab-btn.active { color: #6B3A2A; border-bottom-color: #6B3A2A; }
+        .tab-btn:hover  { color: #6B3A2A; background: rgba(139,69,19,0.05); }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        .req-meta { font-size:0.78rem; color:#8B6347; }
+        .req-meta span { display:inline-block; margin-right:0.8rem; }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+            <img src="images/Ellipse 3.png" alt="LibS">
+            <span>LibS</span>
+        </div>
+        <div class="sidebar-admin-info">
+            <div class="admin-name">Admin</div>
+            <div class="admin-role">System Administrator</div>
+        </div>
+        <nav class="admin-nav">
+            <a href="admin-dashboard.html"><span class="nav-icon">🏠</span> Dashboard Overview</a>
+            <a href="admin-users.html"><span class="nav-icon">👥</span> User Management</a>
+            <a href="admin-books.html"><span class="nav-icon">📚</span> Book Records</a>
+            <a href="admin-approvals.html" class="active"><span class="nav-icon">✅</span> Approvals / Requests</a>
+            <a href="admin-analytics.html"><span class="nav-icon">📊</span> Report & Analytics</a>
+            <a href="admin-settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+        </nav>
+        <a href="login.html" class="sidebar-logout">🚪 Log Out</a>
+    </aside>
+
+    <div class="admin-content">
+        <header class="admin-topbar">
+            <span class="topbar-title">Approvals / Requests</span>
+            <div class="topbar-right">
+                <div class="topbar-admin" id="adminDropdownBtn">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B3A2A&color=fff" alt="Admin">
+                    <div>
+                        <div class="topbar-admin-name">Admin ▾</div>
+                        <div class="topbar-admin-role">Administrator</div>
+                    </div>
+                    <div class="topbar-dropdown" id="adminDropdown">
+                        <a href="#">👤 Account Settings</a>
+                        <div class="dd-divider"></div>
+                        <a href="login.html" class="dd-logout">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-page">
+            <div class="page-header">
+                <div>
+                    <h1>Approvals & Requests</h1>
+                    <p>Review and manage borrow requests from users.</p>
+                </div>
+                <div style="display:flex;gap:0.6rem;align-items:center;">
+                    <input type="text" class="toolbar-search" id="reqSearch" placeholder="Search user or book..." style="width:220px;" oninput="searchRequests()">
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('pending',this)">
+                    Pending Requests <span class="badge badge-orange" style="margin-left:0.4rem;" id="pendingCount">5</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('borrowed',this)">
+                    Borrowed Books <span class="badge badge-blue" style="margin-left:0.4rem;">3</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('returned',this)">
+                    Returned Books <span class="badge badge-green" style="margin-left:0.4rem;">2</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('overdue',this)">
+                    Overdue <span class="badge badge-red" style="margin-left:0.4rem;">1</span>
+                </button>
+            </div>
+
+            <!-- PENDING TAB -->
+            <div class="tab-pane active" id="tab-pending">
+                <div class="request-cards" id="pendingCards">
+
+                    <div class="request-card" data-search="architecting ai software systems adrian bellen">
+                        <div class="req-book-row">
+                            <img class="req-book-img" src="images/aia.jpg" alt="AI Book">
+                            <div class="req-book-info">
+                                <h3>Architecting AI Software Systems</h3>
+                                <p>Book ID: B011 &nbsp;|&nbsp; Request ID: 24</p>
+                                <p>Requested by: <strong>Adrian Bellen</strong> — User</p>
+                                <p>Requested Date: 01/13/26</p>
+                                <div class="req-meta" style="margin-top:0.3rem;">
+                                    <span class="badge badge-orange">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="req-user-row">
+                            <img src="https://ui-avatars.com/api/?name=Adrian+Bellen&background=C8A882&color=2E1A0E" alt="Adrian">
+                            <div class="req-user-info">
+                                <div class="req-user-name">Adrian Bellen</div>
+                                <div class="req-user-role">Student — Computer Engineering</div>
+                            </div>
+                        </div>
+                        <div class="req-actions">
+                            <button class="btn btn-green" onclick="approveRequest(this)">✔ Approve</button>
+                            <button class="btn btn-red"   onclick="declineRequest(this)">✘ Decline</button>
+                        </div>
+                    </div>
+
+                    <div class="request-card" data-search="chemistry for engineering students luke santos">
+                        <div class="req-book-row">
+                            <img class="req-book-img" src="images/chemm.jpg" alt="Chemistry">
+                            <div class="req-book-info">
+                                <h3>Chemistry for Engineering Students</h3>
+                                <p>Book ID: B001 &nbsp;|&nbsp; Request ID: 14</p>
+                                <p>Requested by: <strong>Luke Santos</strong> — User</p>
+                                <p>Requested Date: 01/11/26</p>
+                                <div class="req-meta" style="margin-top:0.3rem;">
+                                    <span class="badge badge-orange">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="req-user-row">
+                            <img src="https://ui-avatars.com/api/?name=Luke+Santos&background=C8A882&color=2E1A0E" alt="Luke">
+                            <div class="req-user-info">
+                                <div class="req-user-name">Luke Santos</div>
+                                <div class="req-user-role">Student — Electronics Engineering</div>
+                            </div>
+                        </div>
+                        <div class="req-actions">
+                            <button class="btn btn-green" onclick="approveRequest(this)">✔ Approve</button>
+                            <button class="btn btn-red"   onclick="declineRequest(this)">✘ Decline</button>
+                        </div>
+                    </div>
+
+                    <div class="request-card" data-search="java programming maria reyes">
+                        <div class="req-book-row">
+                            <img class="req-book-img" src="images/java.webp" alt="Java Programming">
+                            <div class="req-book-info">
+                                <h3>Java Programming</h3>
+                                <p>Book ID: B004 &nbsp;|&nbsp; Request ID: 22</p>
+                                <p>Requested by: <strong>Maria Reyes</strong> — User</p>
+                                <p>Requested Date: 01/12/26</p>
+                                <div class="req-meta" style="margin-top:0.3rem;">
+                                    <span class="badge badge-orange">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="req-user-row">
+                            <img src="https://ui-avatars.com/api/?name=Maria+Reyes&background=C8A882&color=2E1A0E" alt="Maria">
+                            <div class="req-user-info">
+                                <div class="req-user-name">Maria Reyes</div>
+                                <div class="req-user-role">Student — Computer Science</div>
+                            </div>
+                        </div>
+                        <div class="req-actions">
+                            <button class="btn btn-green" onclick="approveRequest(this)">✔ Approve</button>
+                            <button class="btn btn-red"   onclick="declineRequest(this)">✘ Decline</button>
+                        </div>
+                    </div>
+
+                    <div class="request-card" data-search="numerical methods carlo mendoza">
+                        <div class="req-book-row">
+                            <div class="req-book-img" style="background:#C8A882;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border-radius:6px;">📖</div>
+                            <div class="req-book-info">
+                                <h3>Numerical Methods</h3>
+                                <p>Book ID: B006 &nbsp;|&nbsp; Request ID: 25</p>
+                                <p>Requested by: <strong>Carlo Mendoza</strong> — User</p>
+                                <p>Requested Date: 01/14/26</p>
+                                <div class="req-meta" style="margin-top:0.3rem;">
+                                    <span class="badge badge-orange">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="req-user-row">
+                            <img src="https://ui-avatars.com/api/?name=Carlo+Mendoza&background=C8A882&color=2E1A0E" alt="Carlo">
+                            <div class="req-user-info">
+                                <div class="req-user-name">Carlo Mendoza</div>
+                                <div class="req-user-role">Faculty — Engineering Dept</div>
+                            </div>
+                        </div>
+                        <div class="req-actions">
+                            <button class="btn btn-green" onclick="approveRequest(this)">✔ Approve</button>
+                            <button class="btn btn-red"   onclick="declineRequest(this)">✘ Decline</button>
+                        </div>
+                    </div>
+
+                    <div class="request-card" data-search="differential equations ana garcia">
+                        <div class="req-book-row">
+                            <img class="req-book-img" src="images/diff eq.jpg" alt="Diff Eq Book">
+                            <div class="req-book-info">
+                                <h3>Differential Equations</h3>
+                                <p>Book ID: B002 &nbsp;|&nbsp; Request ID: 20</p>
+                                <p>Requested by: <strong>Ana Garcia</strong> — User</p>
+                                <p>Requested Date: 01-10-26</p>
+                                <div class="req-meta" style="margin-top:0.3rem;">
+                                    <span class="badge badge-orange">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="req-user-row">
+                            <img src="https://ui-avatars.com/api/?name=Ana+Garcia&background=C8A882&color=2E1A0E" alt="Ana">
+                            <div class="req-user-info">
+                                <div class="req-user-name">Ana Garcia</div>
+                                <div class="req-user-role">Student — Mathematics</div>
+                            </div>
+                        </div>
+                        <div class="req-actions">
+                            <button class="btn btn-green" onclick="approveRequest(this)">✔ Approve</button>
+                            <button class="btn btn-red"   onclick="declineRequest(this)">✘ Decline</button>
+                        </div>
+                    </div>
+
+                </div>
+                <p id="noPendingMsg" style="display:none;color:#8B6347;text-align:center;padding:2rem;">✅ No pending requests.</p>
+            </div>
+
+            <!-- BORROWED TAB -->
+            <div class="tab-pane" id="tab-borrowed">
+                <div class="panel">
+                    <div class="panel-header"><h2>Currently Borrowed Books</h2></div>
+                    <div class="panel-body" style="padding:0;">
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr><th>User</th><th>Book</th><th>Borrowed</th><th>Due Date</th><th>Status</th><th>Action</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Adrian Bellen</td>
+                                        <td>Chemistry for Engineering Students</td>
+                                        <td>01-03-2026</td>
+                                        <td>01-10-2026</td>
+                                        <td><span class="badge badge-orange">Borrowed</span></td>
+                                        <td><button class="btn btn-green btn-sm" onclick="markReturned(this)">Mark Returned</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Maria Santos</td>
+                                        <td>Open Circuits</td>
+                                        <td>01-06-2026</td>
+                                        <td>01-13-2026</td>
+                                        <td><span class="badge badge-orange">Borrowed</span></td>
+                                        <td><button class="btn btn-green btn-sm" onclick="markReturned(this)">Mark Returned</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Carlo Mendoza</td>
+                                        <td>Differential Equations</td>
+                                        <td>01-03-2026</td>
+                                        <td>01-10-2026</td>
+                                        <td><span class="badge badge-orange">Borrowed</span></td>
+                                        <td><button class="btn btn-green btn-sm" onclick="markReturned(this)">Mark Returned</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RETURNED TAB -->
+            <div class="tab-pane" id="tab-returned">
+                <div class="panel">
+                    <div class="panel-header"><h2>Returned Books</h2></div>
+                    <div class="panel-body" style="padding:0;">
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr><th>User</th><th>Book</th><th>Borrowed</th><th>Returned</th><th>Status</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Juan dela Cruz</td>
+                                        <td>Engineering Mathematics</td>
+                                        <td>12-01-2025</td>
+                                        <td>12-07-2025</td>
+                                        <td><span class="badge badge-green">Returned</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ana Reyes</td>
+                                        <td>Introduction to Programming</td>
+                                        <td>11-15-2025</td>
+                                        <td>11-20-2025</td>
+                                        <td><span class="badge badge-green">Returned</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OVERDUE TAB -->
+            <div class="tab-pane" id="tab-overdue">
+                <div class="panel">
+                    <div class="panel-header"><h2>Overdue Books</h2></div>
+                    <div class="panel-body" style="padding:0;">
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr><th>User</th><th>Book</th><th>Borrowed</th><th>Due Date</th><th>Days Late</th><th>Status</th><th>Action</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Ben Perez</td>
+                                        <td>Physics for Engineers</td>
+                                        <td>10-10-2025</td>
+                                        <td>10-17-2025</td>
+                                        <td style="color:#B71C1C;font-weight:700;">+3 days</td>
+                                        <td><span class="badge badge-red">Overdue</span></td>
+                                        <td><button class="btn btn-orange btn-sm">Send Reminder</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- APPROVE/DECLINE MODAL -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
+        <h2 id="confirmTitle">Confirm Action</h2>
+        <p id="confirmMsg" style="color:#5C3D2E;"></p>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Cancel</button>
+            <button class="btn" id="confirmOkBtn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('adminDropdownBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('adminDropdown').classList.toggle('show');
+    });
+    document.addEventListener('click', () => document.getElementById('adminDropdown').classList.remove('show'));
+
+    // Tabs
+    function switchTab(name, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    // Search
+    function searchRequests() {
+        const val = document.getElementById('reqSearch').value.toLowerCase();
+        document.querySelectorAll('#pendingCards .request-card').forEach(card => {
+            card.style.display = (!val || card.dataset.search.includes(val)) ? '' : 'none';
+        });
+    }
+
+    // Approve
+    function approveRequest(btn) {
+        const card = btn.closest('.request-card');
+        const title = card.querySelector('h3').textContent;
+        showConfirm('✅ Approve Request', `Approve borrow request for "${title}"?`, 'btn-green', () => {
+            card.style.transition = 'opacity 0.3s';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.remove();
+                updatePendingCount();
+            }, 300);
+        });
+    }
+
+    // Decline
+    function declineRequest(btn) {
+        const card = btn.closest('.request-card');
+        const title = card.querySelector('h3').textContent;
+        showConfirm('✘ Decline Request', `Decline borrow request for "${title}"?`, 'btn-red', () => {
+            card.style.transition = 'opacity 0.3s';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.remove();
+                updatePendingCount();
+            }, 300);
+        });
+    }
+
+    function markReturned(btn) {
+        const row = btn.closest('tr');
+        const badge = row.querySelector('.badge-orange');
+        if(badge){ badge.textContent='Returned'; badge.classList.replace('badge-orange','badge-green'); }
+        btn.remove();
+    }
+
+    function updatePendingCount() {
+        const remaining = document.querySelectorAll('#pendingCards .request-card').length;
+        document.getElementById('pendingCount').textContent = remaining;
+        if(remaining === 0) document.getElementById('noPendingMsg').style.display = 'block';
+    }
+
+    let confirmCallback = null;
+    function showConfirm(title, msg, btnClass, cb) {
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMsg').textContent   = msg;
+        const okBtn = document.getElementById('confirmOkBtn');
+        okBtn.className = 'btn ' + btnClass;
+        okBtn.textContent = 'Confirm';
+        confirmCallback = cb;
+        document.getElementById('confirmModal').classList.add('show');
+    }
+
+    document.getElementById('confirmOkBtn').addEventListener('click', () => {
+        if(confirmCallback) confirmCallback();
+        closeModal('confirmModal');
+    });
+
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        m.addEventListener('click', e => { if(e.target===m) m.classList.remove('show'); });
+    });
+</script>
+</body>
+</html>

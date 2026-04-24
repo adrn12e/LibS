@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibS - Contact</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER / NAVBAR -->
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="images/Ellipse 3.png" alt="LibS Logo" class="side-nav-logo-img">
+                <span>LibS</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <h1>Contact Us</h1>
+        <p>Have questions or concerns? Send us a message.</p>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section">
+
+        <!-- CONTACT INFO -->
+        <div class="contact-info">
+            <h2>Get in Touch</h2>
+
+            <div class="contact-detail">
+                <h3>Phone</h3>
+                <p>09777060570</p>
+            </div>
+
+            <div class="contact-detail">
+                <h3>Email</h3>
+                <p>libs@perpetual.edu.ph</p>
+            </div>
+
+            <div class="contact-detail">
+                <h3>Address</h3>
+                <p>University Library, Las Pinas, Metro Manila</p>
+            </div>
+
+            <div class="contact-detail">
+                <h3>Library Hours</h3>
+                <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
+                <p>Saturday: 8:00 AM - 12:00 PM</p>
+                <p>Sunday: Closed</p>
+            </div>
+        </div>
+
+        <!-- INQUIRY FORM -->
+        <div class="contact-form-wrapper">
+            <h2>Send an Inquiry</h2>
+            <form action="#" method="POST" class="contact-form">
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" placeholder="Enter the subject of your inquiry" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="inquiry-type">Inquiry Type</label>
+                    <select id="inquiry-type" name="inquiry_type" required>
+                        <option value="">-- Select Inquiry Type --</option>
+                        <option value="book-availability">Book Availability</option>
+                        <option value="account-issue">Account Issue</option>
+                        <option value="borrowed-books">Borrowed Books Concern</option>
+                        <option value="reservation">Reservation Concern</option>
+                        <option value="general">General Inquiry</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">SEND MESSAGE</button>
+
+            </form>
+        </div>
+
+    </section>
+
+    <!-- MAP / LOCATION -->
+    <section class="location-section">
+        <h2>Our Location</h2>
+        <div class="map-placeholder">
+            <p>University Library, Las Pinas, Metro Manila</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2025-2026 LibS - Library Management System. All rights reserved.</p>
+        <p>Developed by Adrian Sarmiento Bellen | 2nd Year Computer Engineering</p>
+    </footer>
+
+</body>
+</html>

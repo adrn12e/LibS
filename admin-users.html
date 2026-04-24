@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibS - User Management</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+            <img src="images/Ellipse 3.png" alt="LibS">
+            <span>LibS</span>
+        </div>
+        <div class="sidebar-admin-info">
+            <div class="admin-name">Admin</div>
+            <div class="admin-role">System Administrator</div>
+        </div>
+        <nav class="admin-nav">
+            <a href="admin-dashboard.html"><span class="nav-icon">🏠</span> Dashboard Overview</a>
+            <a href="admin-users.html" class="active"><span class="nav-icon">👥</span> User Management</a>
+            <a href="admin-books.html"><span class="nav-icon">📚</span> Book Records</a>
+            <a href="admin-approvals.html"><span class="nav-icon">✅</span> Approvals / Requests</a>
+            <a href="admin-analytics.html"><span class="nav-icon">📊</span> Report & Analytics</a>
+            <a href="admin-settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+        </nav>
+        <a href="login.html" class="sidebar-logout">🚪 Log Out</a>
+    </aside>
+
+    <div class="admin-content">
+        <header class="admin-topbar">
+            <span class="topbar-title">User Management</span>
+            <div class="topbar-right">
+                <div class="topbar-admin" id="adminDropdownBtn">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B3A2A&color=fff" alt="Admin">
+                    <div>
+                        <div class="topbar-admin-name">Admin ▾</div>
+                        <div class="topbar-admin-role">Administrator</div>
+                    </div>
+                    <div class="topbar-dropdown" id="adminDropdown">
+                        <a href="#">👤 Account Settings</a>
+                        <div class="dd-divider"></div>
+                        <a href="login.html" class="dd-logout">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-page">
+            <div class="page-header">
+                <div>
+                    <h1>User Management</h1>
+                    <p>View, manage and monitor all registered users.</p>
+                </div>
+                <button class="btn btn-brown" onclick="openAddUserModal()">+ Add User</button>
+            </div>
+
+            <!-- STATS -->
+            <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
+                <div class="stat-card s-blue"><div class="stat-num">145</div><div class="stat-label">Total Users</div></div>
+                <div class="stat-card s-green"><div class="stat-num">110</div><div class="stat-label">Active Users</div></div>
+                <div class="stat-card s-orange"><div class="stat-num">20</div><div class="stat-label">Admin Users</div></div>
+                <div class="stat-card s-red"><div class="stat-num">15</div><div class="stat-label">Inactive Users</div></div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>All Users</h2>
+                    <div style="display:flex;gap:0.6rem;align-items:center;">
+                        <span style="font-size:0.8rem;color:rgba(255,255,255,0.6);">145 total</span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="toolbar">
+                        <input type="text" class="toolbar-search" id="userSearch" placeholder="Search by name, email, ID...">
+                        <select id="roleFilter" onchange="filterUsers()">
+                            <option value="">All Roles</option>
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <select id="statusFilter" onchange="filterUsers()">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersBody">
+                                <tr data-role="student" data-status="active" data-id="001" data-firstname="Adrian" data-lastname="Bellen" data-email="ab@pu.edu.ph">
+                                    <td>001</td>
+                                    <td><div class="user-name">Adrian Bellen</div><div class="user-email">ab@pu.edu.ph</div></td>
+                                    <td><span class="badge badge-blue">Student</span></td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewUser(this)">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editUser(this)">Edit</button>
+                                        <button class="btn btn-red btn-sm" onclick="deactivateUser(this)">Deactivate</button>
+                                    </div></td>
+                                </tr>
+                                <tr data-role="student" data-status="active" data-id="002" data-firstname="Rodillo" data-lastname="Gole Jr." data-email="rgole@edu.ph">
+                                    <td>002</td>
+                                    <td><div class="user-name">Rodillo Gole Jr.</div><div class="user-email">rgole@edu.ph</div></td>
+                                    <td><span class="badge badge-blue">Student</span></td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewUser(this)">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editUser(this)">Edit</button>
+                                        <button class="btn btn-red btn-sm" onclick="deactivateUser(this)">Deactivate</button>
+                                    </div></td>
+                                </tr>
+                                <tr data-role="faculty" data-status="active" data-id="003" data-firstname="Francis" data-lastname="Canalete" data-email="fcanalete@edu.ph">
+                                    <td>003</td>
+                                    <td><div class="user-name">Francis Canalete</div><div class="user-email">fcanalete@edu.ph</div></td>
+                                    <td><span class="badge badge-orange">Faculty</span></td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewUser(this)">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editUser(this)">Edit</button>
+                                        <button class="btn btn-red btn-sm" onclick="deactivateUser(this)">Deactivate</button>
+                                    </div></td>
+                                </tr>
+                                <tr data-role="student" data-status="active" data-id="004" data-firstname="Junemar" data-lastname="Fajardo" data-email="jfajardo@edu.ph">
+                                    <td>004</td>
+                                    <td><div class="user-name">Junemar Fajardo</div><div class="user-email">jfajardo@edu.ph</div></td>
+                                    <td><span class="badge badge-blue">Student</span></td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewUser(this)">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editUser(this)">Edit</button>
+                                        <button class="btn btn-red btn-sm" onclick="deactivateUser(this)">Deactivate</button>
+                                    </div></td>
+                                </tr>
+                                <tr data-role="student" data-status="active" data-id="005" data-firstname="Victor" data-lastname="Wembanyama" data-email="vwemby@edu.ph">
+                                    <td>005</td>
+                                    <td><div class="user-name">Victor Wembanyama</div><div class="user-email">vwemby@edu.ph</div></td>
+                                    <td><span class="badge badge-blue">Student</span></td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewUser(this)">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editUser(this)">Edit</button>
+                                        <button class="btn btn-red btn-sm" onclick="deactivateUser(this)">Deactivate</button>
+                                    </div></td>
+                                </tr>
+                                <tr data-role="student" data-status="inactive" data-id="006" data-firstname="Ryan" data-lastname="Zoe" data-email="rzoe@pu.edu.ph">
+                                    <td>006</td>
+                                    <td><div class="user-name">Ryan Zoe</div><div class="user-email">rzoe@pu.edu.ph</div></td>
+                                    <td><span class="badge badge-blue">Student</span></td>
+                                    <td><span class="badge badge-red">Inactive</span></td>
+                                    <td><div class="action-group">
+                                        <button class="btn btn-blue btn-sm" onclick="viewUser(this)">View</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="editUser(this)">Edit</button>
+                                        <button class="btn btn-green btn-sm" onclick="activateUser(this)">Activate</button>
+                                    </div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="addUserModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('addUserModal')">✕</button>
+        <h2>➕ Add New User</h2>
+        <div class="form-group"><label>First Name</label><input type="text" placeholder="Enter first name"></div>
+        <div class="form-group"><label>Last Name</label><input type="text" placeholder="Enter last name"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="Enter email"></div>
+        <div class="form-group"><label>Role</label>
+            <select><option value="student">Student</option><option value="faculty">Faculty</option><option value="admin">Admin</option></select>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('addUserModal')">Cancel</button>
+            <button class="btn btn-brown">Add User</button>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW USER MODAL -->
+<div class="modal-overlay" id="viewUserModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('viewUserModal')">✕</button>
+        <h2>👤 User Details</h2>
+        <div id="viewUserContent"></div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('viewUserModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT USER MODAL -->
+<div class="modal-overlay" id="editUserModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('editUserModal')">✕</button>
+        <h2>✏️ Edit User</h2>
+        <input type="hidden" id="editUserId">
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="editFirstName" placeholder="Enter first name">
+        </div>
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="editLastName" placeholder="Enter last name">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="editEmail" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <select id="editRole">
+                <option value="student">Student</option>
+                <option value="faculty">Faculty</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Status</label>
+            <select id="editStatus">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('editUserModal')">Cancel</button>
+            <button class="btn btn-brown" onclick="saveEditUser()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .user-name { font-weight: 700; }
+    .user-email { font-size: 0.78rem; color: #8B6347; }
+
+    .modal-overlay.show { display: flex !important; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-box { background: #fff; border-radius: 12px; padding: 2rem; width: 100%; max-width: 440px; position: relative; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #888; }
+    .modal-box h2 { margin: 0 0 1.2rem; font-size: 1.1rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 0.3rem; color: #555; }
+    .form-group input,
+    .form-group select { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 1.4rem; }
+
+    /* Toast notification */
+    #toast { position: fixed; bottom: 2rem; right: 2rem; background: #2d7a4f; color: #fff; padding: 0.75rem 1.25rem; border-radius: 8px; font-size: 0.88rem; font-weight: 500; z-index: 9999; opacity: 0; transform: translateY(10px); transition: opacity 0.25s, transform 0.25s; pointer-events: none; }
+    #toast.show { opacity: 1; transform: translateY(0); }
+</style>
+
+<div id="toast">Changes saved successfully.</div>
+
+<script>
+    /* ── Dropdown ── */
+    document.getElementById('adminDropdownBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('adminDropdown').classList.toggle('show');
+    });
+    document.addEventListener('click', () => document.getElementById('adminDropdown').classList.remove('show'));
+
+    /* ── Search / Filter ── */
+    document.getElementById('userSearch').addEventListener('input', filterUsers);
+
+    function filterUsers() {
+        const search = document.getElementById('userSearch').value.toLowerCase();
+        const role   = document.getElementById('roleFilter').value.toLowerCase();
+        const status = document.getElementById('statusFilter').value.toLowerCase();
+        document.querySelectorAll('#usersBody tr').forEach(row => {
+            const text    = row.textContent.toLowerCase();
+            const rRole   = row.dataset.role   || '';
+            const rStatus = row.dataset.status || '';
+            const ok = (!search || text.includes(search)) &&
+                       (!role   || rRole   === role) &&
+                       (!status || rStatus === status);
+            row.style.display = ok ? '' : 'none';
+        });
+    }
+
+    /* ── Modals ── */
+    function openAddUserModal() { document.getElementById('addUserModal').classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); });
+    });
+
+    /* ── View ── */
+    function viewUser(btn) {
+        const row    = btn.closest('tr');
+        const name   = row.querySelector('.user-name').textContent;
+        const email  = row.querySelector('.user-email').textContent;
+        const role   = row.querySelector('[class*="badge-blue"], [class*="badge-orange"]').textContent;
+        const status = row.dataset.status === 'active' ? 'Active' : 'Inactive';
+
+        document.getElementById('viewUserContent').innerHTML =
+            `<p><strong>ID:</strong> ${row.dataset.id}</p>
+             <p><strong>Name:</strong> ${name}</p>
+             <p><strong>Email:</strong> ${email}</p>
+             <p><strong>Role:</strong> ${role}</p>
+             <p><strong>Status:</strong> ${status}</p>
+             <p><strong>Books Currently Borrowed:</strong> 2</p>`;
+        document.getElementById('viewUserModal').classList.add('show');
+    }
+
+    /* ── Edit ── */
+    let currentEditRow = null;
+
+    function editUser(btn) {
+        const row = btn.closest('tr');
+        currentEditRow = row;
+
+        // Pre-fill modal fields from row's data attributes
+        document.getElementById('editUserId').value    = row.dataset.id;
+        document.getElementById('editFirstName').value = row.dataset.firstname;
+        document.getElementById('editLastName').value  = row.dataset.lastname;
+        document.getElementById('editEmail').value     = row.dataset.email;
+        document.getElementById('editRole').value      = row.dataset.role;
+        document.getElementById('editStatus').value    = row.dataset.status;
+
+        document.getElementById('editUserModal').classList.add('show');
+    }
+
+    function saveEditUser() {
+        if (!currentEditRow) return;
+
+        const firstName = document.getElementById('editFirstName').value.trim();
+        const lastName  = document.getElementById('editLastName').value.trim();
+        const email     = document.getElementById('editEmail').value.trim();
+        const role      = document.getElementById('editRole').value;
+        const status    = document.getElementById('editStatus').value;
+
+        if (!firstName || !lastName || !email) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        const fullName = firstName + ' ' + lastName;
+
+        // Update data attributes
+        currentEditRow.dataset.firstname = firstName;
+        currentEditRow.dataset.lastname  = lastName;
+        currentEditRow.dataset.email     = email;
+        currentEditRow.dataset.role      = role;
+        currentEditRow.dataset.status    = status;
+
+        // Update name & email cells
+        currentEditRow.querySelector('.user-name').textContent = fullName;
+        currentEditRow.querySelector('.user-email').textContent = email;
+
+        // Update role badge
+        const roleBadge = currentEditRow.querySelector('td:nth-child(3) .badge');
+        const roleBadgeMap = {
+            student: ['badge-blue',   'Student'],
+            faculty: ['badge-orange', 'Faculty'],
+            admin:   ['badge-red',    'Admin']
+        };
+        roleBadge.className = 'badge ' + roleBadgeMap[role][0];
+        roleBadge.textContent = roleBadgeMap[role][1];
+
+        // Update status badge
+        const statusBadge = currentEditRow.querySelector('td:nth-child(4) .badge');
+        if (status === 'active') {
+            statusBadge.className = 'badge badge-green';
+            statusBadge.textContent = 'Active';
+        } else {
+            statusBadge.className = 'badge badge-red';
+            statusBadge.textContent = 'Inactive';
+        }
+
+        // Update deactivate/activate button
+        const actionBtn = currentEditRow.querySelector('.btn-red, .btn-green:not(.btn-blue)');
+        if (actionBtn && (actionBtn.textContent === 'Deactivate' || actionBtn.textContent === 'Activate')) {
+            if (status === 'active') {
+                actionBtn.textContent = 'Deactivate';
+                actionBtn.className = actionBtn.className.replace('btn-green', 'btn-red');
+                actionBtn.onclick = function() { deactivateUser(this); };
+            } else {
+                actionBtn.textContent = 'Activate';
+                actionBtn.className = actionBtn.className.replace('btn-red', 'btn-green');
+                actionBtn.onclick = function() { activateUser(this); };
+            }
+        }
+
+        closeModal('editUserModal');
+        showToast('Changes saved for ' + fullName + '.');
+    }
+
+    /* ── Deactivate / Activate ── */
+    function deactivateUser(btn) {
+        const row = btn.closest('tr');
+        row.dataset.status = 'inactive';
+        const badge = row.querySelector('td:nth-child(4) .badge');
+        badge.textContent = 'Inactive';
+        badge.className = 'badge badge-red';
+        btn.textContent = 'Activate';
+        btn.classList.replace('btn-red', 'btn-green');
+        btn.onclick = function() { activateUser(btn); };
+    }
+
+    function activateUser(btn) {
+        const row = btn.closest('tr');
+        row.dataset.status = 'active';
+        const badge = row.querySelector('td:nth-child(4) .badge');
+        badge.textContent = 'Active';
+        badge.className = 'badge badge-green';
+        btn.textContent = 'Deactivate';
+        btn.classList.replace('btn-green', 'btn-red');
+        btn.onclick = function() { deactivateUser(btn); };
+    }
+
+    /* ── Toast ── */
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg || 'Changes saved successfully.';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+</script>
+</body>
+</html> 

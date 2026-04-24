@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibS - Register</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER / NAVBAR -->
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="images/Ellipse 3.png" alt="LibS Logo" class="side-nav-logo-img">
+                <span>LibS</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- REGISTER FORM -->
+    <section class="auth-section">
+        <div class="auth-container">
+
+            <div class="auth-tabs">
+                <a href="login.html" class="tab">LOGIN</a>
+                <a href="register.html" class="tab active">REGISTER</a>
+            </div>
+
+            <h2>Create an account</h2>
+            <p>Fill in the fields below to create your LibS account.</p>
+
+            <form action="#" method="POST">
+
+                <div class="form-group">
+                    <label for="firstname">First Name</label>
+                    <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastname">Last Name</label>
+                    <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id-number">ID Number</label>
+                    <input type="text" id="id-number" name="id_number" placeholder="Enter your school ID number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="professor">Professor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="course">Course / Department</label>
+                    <input type="text" id="course" name="course" placeholder="Enter your course or department">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                        <button type="button" class="toggle-password">&#128065;</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirm-password" name="confirm_password" placeholder="Re-enter your password" required>
+                        <button type="button" class="toggle-password">&#128065;</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="terms">
+                        <input type="checkbox" name="agree_terms" required>
+                        I agree to the <a href="#">Terms and Conditions</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary">REGISTER</button>
+
+                <p class="redirect-login">Already have an account? <a href="login.html">Log in here</a></p>
+
+            </form>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2025-2026 LibS - Library Management System. All rights reserved.</p>
+        <p>Developed by Adrian Sarmiento Bellen | 2nd Year Computer Engineering</p>
+    </footer>
+
+</body>
+</html>
